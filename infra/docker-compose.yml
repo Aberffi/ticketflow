@@ -20,6 +20,18 @@ services:
     depends_on:
       - discovery-server
 
+  event-service:
+    build:
+      context: ..
+      dockerfile: services/event-service/Dockerfile
+    container_name: event-service
+    ports:
+      - "8082:8082"
+    environment:
+      EUREKA_URL: http://discovery-server:8761/eureka/
+    depends_on:
+      - discovery-server
+
   api-gateway:
     build:
       context: ..
