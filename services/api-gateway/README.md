@@ -33,6 +33,11 @@ and `default-filters` adds `AddResponseHeader=X-Served-By, api-gateway` to every
 The Eureka address can be overridden with the `EUREKA_URL` environment variable
 (default `http://localhost:8761/eureka/`). This is what Docker Compose does.
 
+## Central configuration
+The gateway imports `config-repo/api-gateway.yml` and `config-repo/application.yml` from the Config Server
+(`CONFIG_SERVER_URL`, default `http://localhost:8888`). Routes could be moved there too; they stay local for now.
+The gateway still starts without the Config Server (`optional:`).
+
 ## Run locally
 Start the registry first, then the service, then the gateway.
 

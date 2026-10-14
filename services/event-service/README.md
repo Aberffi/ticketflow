@@ -51,6 +51,12 @@ The service registers itself in Eureka under the name `event-service`
 (`spring.application.name`). Eureka address: `eureka.client.service-url.defaultZone`,
 overridable with the `EUREKA_URL` environment variable (default `http://localhost:8761/eureka/`).
 
+## Central configuration
+The service imports shared configuration from the Config Server
+(`spring.config.import=optional:configserver:...`, default `http://localhost:8888`, `CONFIG_SERVER_URL` in Compose).
+It gets `config-repo/application.yml`; add `config-repo/event-service.yml` for settings specific to it.
+The service still starts without the Config Server (`optional:`).
+
 ## Run locally
 Optional: start the registry first (`./mvnw -pl services/discovery-server spring-boot:run`).
 

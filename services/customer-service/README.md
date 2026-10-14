@@ -43,6 +43,13 @@ Errors follow RFC 9457 (`ProblemDetail`): 400 validation, 404 not found, 409 dup
     dto/           request/response records (the API contract)
     exceptions/    domain exceptions and their HTTP mapping
 
+## Central configuration
+At startup the service imports its configuration from the Config Server
+(`spring.config.import=optional:configserver:...`, default `http://localhost:8888`, `CONFIG_SERVER_URL` in Compose).
+Values from `config-repo/customer-service.yml` and `config-repo/application.yml` override the local file.
+`GET /api/customers/config-demo` shows a served value; change it and `POST /actuator/refresh` to reload it live.
+The service still starts without the Config Server (`optional:`).
+
 ## Run locally
 Optional: start the registry first (`./mvnw -pl services/discovery-server spring-boot:run`)
 and look for `CUSTOMER-SERVICE` on http://localhost:8761 (up to ~30 s).

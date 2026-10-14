@@ -33,7 +33,7 @@ composants déjà présents des éléments planifiés et des choix restant à va
 | `api-gateway` | Single entry point, routing, rate limiting | Spring Cloud Gateway | Done |
 | `discovery-server` | Service registry | Eureka | Done |
 | `event-service` | Events catalog (create, publish, close) | Spring Web, JPA | Done |
-| `config-server` | Centralized configuration | Spring Cloud Config | Planned |
+| `config-server` | Centralized configuration | Spring Cloud Config | Done |
 | `booking-service` | Booking and seat locking | OpenFeign, Resilience4J | Planned |
 | `payment-service` | Simulated payment provider (random failures) | Resilience4J | Planned |
 | `notification-service` | Confirmation emails/SMS | Kafka consumer | Planned |
@@ -42,9 +42,9 @@ composants déjà présents des éléments planifiés et des choix restant à va
 
 ## Roadmap
 
-Each step has a Git tag and a lesson in `docs/lessons/`.
+Each step is developed on a `feature/step-XX-...` branch and frozen with a `step-XX-...` tag once merged. The numbering follows the cahier des charges; only steps already tagged are available.
 
-| Tag | Content |
+| Step | Content |
 |---|---|
 | `step-00-setup` | Parent POM, repo structure, CI |
 | `step-01-customer-service` | First business service |
@@ -52,15 +52,30 @@ Each step has a Git tag and a lesson in `docs/lessons/`.
 | `step-03-discovery` | Eureka + load-balanced routing |
 | `step-04-event-service` | Second business service |
 | `step-05-config` | Config Server |
-| `step-06-booking-feign` | booking-service + OpenFeign |
-| `step-07-resilience` | payment-service + Resilience4J |
-| `step-08-kafka` | Events + notification-service |
-| `step-09-saga` | Saga, Outbox, idempotency |
-| `step-10-security` | Keycloak (customer-service integration) |
-| `step-11-observability` | Tracing and metrics |
-| `step-12-ai` | Spring AI |
+| `step-06-persistence` | PostgreSQL per service + Flyway migrations |
+| `step-07-api-contract` | `/api/v1`, OpenAPI, explicit gateway routes |
+| `step-08-security` | Keycloak, JWT, roles |
+| `step-09-catalog` | Catalog features (search, pagination) |
+| `step-10-customer-profile` | Customer profile bound to the identity |
+| `step-11-booking` | booking-service + OpenFeign |
+| `step-12-resilience` | Resilience4J |
+| `step-13-payment` | Simulated payment service |
+| `step-14-kafka` | Versioned events, outbox, DLT |
+| `step-15-saga` | Saga, idempotency |
+| `step-16-ticket` | Ticket issuing |
+| `step-17-notification` | notification-service |
+| `step-18-observability` | Tracing and metrics |
+| `step-19-mcp-tools` | MCP tool server |
+| `step-20-assistant` | AI assistant |
+| `step-21-telegram-link` | Telegram account linking |
+| `step-22-reports` | Reports |
+| `step-23-web-catalog` | Angular catalog |
+| `step-24-web-client` | Angular customer journey |
+| `step-25-web-admin` | Angular back-office |
+| `step-26-docs-demo` | Documentation and demo |
 
 To follow a lesson, check out its tag: `git checkout step-01-customer-service`.
+Start order with Docker Compose is handled for you: config-server, discovery-server, then the services.
 
 ## Tech stack
 
