@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: api-gateway
+  config:
+    # Central configuration (step-05). "optional:" = start anyway if the Config Server is down.
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
   cloud:
     gateway:
       server:
