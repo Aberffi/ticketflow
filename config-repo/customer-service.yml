@@ -1,0 +1,5 @@
+# Served to the application named "customer-service" only.
+ticketflow:
+  demo:
+    # Read by GET /api/customers/config-demo. Change it, then POST /actuator/refresh.
+    message: "Hello from the Config Server"

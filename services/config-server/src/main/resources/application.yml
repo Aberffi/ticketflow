@@ -1,0 +1,22 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  profiles:
+    # "native" = serve plain files from a folder (no Git needed). Ideal for a course and for tests.
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          # Default: the config-repo/ folder packaged in the jar. Override with CONFIG_REPO, e.g.
+          # file:/config-repo/ (Docker Compose mounts the folder there so edits are served live).
+          search-locations: ${CONFIG_REPO:classpath:/config-repo/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

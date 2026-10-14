@@ -1,0 +1,9 @@
+# Shared by EVERY service (the Config Server serves "application.yml" to all applications).
+# Only NON-SECRET values belong here. Passwords and keys never go in this folder.
+management:
+  endpoints:
+    web:
+      exposure:
+        # "refresh" lets a service reload its configuration without a restart:
+        #   curl -X POST http://localhost:8081/actuator/refresh
+        include: health,info,refresh

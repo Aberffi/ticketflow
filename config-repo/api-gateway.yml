@@ -1,0 +1,8 @@
+# Served to the application named "api-gateway" only.
+# A file named after the application wins over application.yml: the gateway must keep
+# exposing its "gateway" actuator endpoint (/actuator/gateway/routes).
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,refresh
