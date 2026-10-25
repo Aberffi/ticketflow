@@ -4,15 +4,49 @@ server:
 spring:
   application:
     name: config-server
+
+  # ---------------------------------------------------------------------------------------------
+  # BACKEND: where the configuration is read from.
+  #
+  # Spring Cloud Config reads from a GIT repository unless the "native" profile is active, so the
+  # default below is Git: every change is versioned, reviewed and reversible, which is what a
+  # shared configuration needs.
+  #
+  # LOCAL FILES (kept for reference, handy for a first run with no Git repository at all):
+  # uncomment the two lines below AND the "native" block further down. The value of
+  # search-locations is the config-repo/ folder: packaged in the jar by default, or a real folder
+  # with CONFIG_REPO=file:/path/to/config-repo/ (Docker Compose mounts it, so edits are live).
+   #---------------------------------------------------------------------------------------------
   profiles:
-    # "native" = serve plain files from a folder (no Git needed). Ideal for a course and for tests.
-    active: native
+     active: native
   cloud:
     config:
       server:
+        git:
+          # REQUIRED, deliberately without a default: the server refuses to start and names the
+          # missing variable, instead of silently serving nothing. Example:
+          #   CONFIG_GIT_URI=https://github.com/<you>/ticketflow-config.git
+          uri: ${CONFIG_GIT_URI}
+          # Branch (or tag, or commit) served when a client does not ask for a specific label.
+          default-label: ${CONFIG_GIT_LABEL:main}
+          # Only for a PRIVATE repository over HTTPS: a user name and an access TOKEN, never a real
+          # password. Leave both empty for a public repository. Inject them from the environment
+          # or a secret manager; they must not be written in this file.
+          username: ${CONFIG_GIT_USERNAME:}
+          password: ${CONFIG_GIT_PASSWORD:}
+          # Clone at startup: a wrong URL or wrong credentials fail NOW, in the logs, and not on
+          # the first request of the first service.
+          clone-on-start: true
+          # Discard local changes of the working copy if the clone ever diverges from the remote
+          # (the server only reads, so the remote is always right).
+          force-pull: true
+          # Seconds between two fetches from the remote. 0 = fetch on every request. A push is
+          # therefore visible to clients within this delay; they still need POST /actuator/refresh.
+          refresh-rate: ${CONFIG_GIT_REFRESH_RATE:30}
+          timeout: 10
+
+        # LOCAL FILES backend (see the top of this file). Uncomment together with "profiles".
         native:
-          # Default: the config-repo/ folder packaged in the jar. Override with CONFIG_REPO, e.g.
-          # file:/config-repo/ (Docker Compose mounts the folder there so edits are served live).
           search-locations: ${CONFIG_REPO:classpath:/config-repo/}
 
 management:

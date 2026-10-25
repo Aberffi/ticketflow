@@ -11,7 +11,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+/**
+ * The LOCAL FILES backend (profile "native"): serves the config-repo/ folder copied into the jar.
+ * The default backend is Git, see {@link ConfigServerGitBackendTest}.
+ */
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.profiles.active=native",
+        "spring.cloud.config.server.native.search-locations=classpath:/config-repo/",
+        // The git block of application.yml is not used here; a value avoids resolving CONFIG_GIT_URI
+        "spring.cloud.config.server.git.uri=not-used-with-the-native-profile"
+})
 class ConfigServerApplicationTests {
 
     @Value("${local.server.port}")
