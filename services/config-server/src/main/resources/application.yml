@@ -11,14 +11,8 @@ spring:
   # Spring Cloud Config reads from a GIT repository unless the "native" profile is active, so the
   # default below is Git: every change is versioned, reviewed and reversible, which is what a
   # shared configuration needs.
-  #
-  # LOCAL FILES (kept for reference, handy for a first run with no Git repository at all):
-  # uncomment the two lines below AND the "native" block further down. The value of
-  # search-locations is the config-repo/ folder: packaged in the jar by default, or a real folder
-  # with CONFIG_REPO=file:/path/to/config-repo/ (Docker Compose mounts it, so edits are live).
    #---------------------------------------------------------------------------------------------
-  profiles:
-     active: native
+
   cloud:
     config:
       server:
