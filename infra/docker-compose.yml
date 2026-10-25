@@ -1,4 +1,23 @@
 services:
+  config-server:
+    build:
+      context: ..
+      dockerfile: services/config-server/Dockerfile
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    environment:
+      # Serve the live config-repo/ folder (mounted below): edit a file, no rebuild needed
+      CONFIG_REPO: file:/config-repo/
+    volumes:
+      - ../config-repo:/config-repo:ro
+    healthcheck:
+      # The JRE image has no curl: a plain TCP check on the port is enough
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8888'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
   discovery-server:
     build:
       context: ..
@@ -17,8 +36,12 @@ services:
     environment:
       # Inside the Compose network, Eureka is reached by its service name, never by localhost
       EUREKA_URL: http://discovery-server:8761/eureka/
+      CONFIG_SERVER_URL: http://config-server:8888
     depends_on:
-      - discovery-server
+      discovery-server:
+        condition: service_started
+      config-server:
+        condition: service_healthy
 
   event-service:
     build:
@@ -29,8 +52,12 @@ services:
       - "8082:8082"
     environment:
       EUREKA_URL: http://discovery-server:8761/eureka/
+      CONFIG_SERVER_URL: http://config-server:8888
     depends_on:
-      - discovery-server
+      discovery-server:
+        condition: service_started
+      config-server:
+        condition: service_healthy
 
   api-gateway:
     build:
@@ -42,5 +69,9 @@ services:
     environment:
       # No more static URL: the gateway finds customer-service through Eureka (lb://)
       EUREKA_URL: http://discovery-server:8761/eureka/
+      CONFIG_SERVER_URL: http://config-server:8888
     depends_on:
-      - discovery-server
+      discovery-server:
+        condition: service_started
+      config-server:
+        condition: service_healthy
