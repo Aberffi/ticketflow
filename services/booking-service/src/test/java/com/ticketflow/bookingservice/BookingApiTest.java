@@ -179,35 +179,44 @@ class BookingApiTest {
         assertThat(book(event, 42, 1)).isEqualTo(409);
     }
 
+    /**
+     * The dangerous moment is the FIRST booking of an event, when several requests create its seat
+     * counter at the same time (a bug there once reset the counter and sold 6 seats out of 3, in about
+     * 1 round out of 15). One round proves little, so the scenario is repeated on fresh events.
+     */
     @Test
     void concurrentBookingsOfTheLastSeatsCannotOversell() throws Exception {
         int capacity = 3;
         int attempts = 8;
-        Long event = publishedEvent(capacity);
+        int rounds = 40;
 
-        ExecutorService pool = Executors.newFixedThreadPool(attempts);
-        CountDownLatch start = new CountDownLatch(1);
-        List<Future<Integer>> results = new ArrayList<>();
-        for (int i = 0; i < attempts; i++) {
-            long customer = 100 + i;
-            Callable<Integer> attempt = () -> {
-                start.await();
-                return book(event, customer, 1);
-            };
-            results.add(pool.submit(attempt));
-        }
-        start.countDown();
+        for (int round = 0; round < rounds; round++) {
+            Long event = publishedEvent(capacity);
 
-        int created = 0;
-        for (Future<Integer> result : results) {
-            int code = result.get();
-            assertThat(code).isIn(201, 409);
-            if (code == 201) {
-                created++;
+            ExecutorService pool = Executors.newFixedThreadPool(attempts);
+            CountDownLatch start = new CountDownLatch(1);
+            List<Future<Integer>> results = new ArrayList<>();
+            for (int i = 0; i < attempts; i++) {
+                long customer = 100 + i;
+                Callable<Integer> attempt = () -> {
+                    start.await();
+                    return book(event, customer, 1);
+                };
+                results.add(pool.submit(attempt));
             }
+            start.countDown();
+
+            int created = 0;
+            for (Future<Integer> result : results) {
+                int code = result.get();
+                assertThat(code).isIn(201, 409);
+                if (code == 201) {
+                    created++;
+                }
+            }
+            pool.shutdown();
+            assertThat(created).as("seats sold in round %d", round).isEqualTo(capacity);
         }
-        pool.shutdown();
-        assertThat(created).isEqualTo(capacity);
     }
 
     // ---- reading ----

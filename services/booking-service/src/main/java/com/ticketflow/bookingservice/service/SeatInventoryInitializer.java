@@ -1,6 +1,5 @@
 package com.ticketflow.bookingservice.service;
 
-import com.ticketflow.bookingservice.entities.SeatInventory;
 import com.ticketflow.bookingservice.repos.SeatInventoryRepo;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,10 +18,9 @@ public class SeatInventoryInitializer {
         this.inventory = inventory;
     }
 
+    /** Insert-only: an existing counter (maybe already used by other bookings) is never reset. */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void ensureExists(Long eventId, int capacity) {
-        if (!inventory.existsById(eventId)) {
-            inventory.saveAndFlush(new SeatInventory(eventId, capacity));
-        }
+        inventory.createIfAbsent(eventId, capacity);
     }
 }

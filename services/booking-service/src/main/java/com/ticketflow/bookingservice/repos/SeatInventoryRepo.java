@@ -12,6 +12,17 @@ import org.springframework.data.repository.query.Param;
  */
 public interface SeatInventoryRepo extends JpaRepository<SeatInventory, Long> {
 
+    /**
+     * Creates the counter of an event if it does not exist yet, and NEVER touches an existing one.
+     * Returns 1 if created, 0 if it already existed. (Not {@code save()}: for an entity whose id is
+     * already set, save() is a merge, which would overwrite the live counter with {@code held = 0}.)
+     */
+    @Modifying
+    @Query(value = "insert into seat_inventory (event_id, capacity, held) "
+            + "select cast(:eventId as bigint), cast(:capacity as integer), 0 "
+            + "where not exists (select 1 from seat_inventory where event_id = :eventId)", nativeQuery = true)
+    int createIfAbsent(@Param("eventId") Long eventId, @Param("capacity") int capacity);
+
     /** Takes {@code quantity} seats if enough are left. Returns 1 if taken, 0 if sold out. */
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("update SeatInventory s set s.held = s.held + :quantity, s.capacity = :capacity "
