@@ -72,7 +72,9 @@ class ConfigServerGitBackendTest {
 
     private static Path createRepository() {
         try {
-            Path dir = Files.createTempDirectory("ticketflow-config-git-");
+            // toRealPath(): on macOS the temp folder (/var/...) is a symbolic link to /private/var/...
+            // and Spring Cloud Config refuses a repository whose path is not the resolved one.
+            Path dir = Files.createTempDirectory("ticketflow-config-git-").toRealPath();
             try (Git git = Git.init().setDirectory(dir.toFile()).setInitialBranch("main").call()) {
                 Files.writeString(dir.resolve("application.yml"), "shared:\n  value: shared-from-git\n");
                 Files.writeString(dir.resolve("demo-service.yml"), "demo:\n  message: hello-from-git\n");
