@@ -30,8 +30,17 @@ import org.springframework.test.context.DynamicPropertySource;
  */
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "eureka.client.enabled=false")
+        properties = {
+        "eureka.client.enabled=false",
+        "spring.cloud.config.enabled=false",
+        "spring.config.import=",
+        "spring.cloud.gateway.server.webflux.discovery.locator.enabled=true",
+        "spring.cloud.gateway.server.webflux.discovery.locator.lower-case-service-id=true",
+        "spring.cloud.gateway.server.webflux.default-filters[0]=AddResponseHeader=X-Served-By, api-gateway"
+})
 class GatewayRoutingTest {
+
+
 
     private static final AtomicReference<String> lastBackendPath = new AtomicReference<>();
     private static final HttpServer backend = startBackend();

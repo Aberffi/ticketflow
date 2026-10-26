@@ -59,6 +59,22 @@ services:
       config-server:
         condition: service_healthy
 
+  booking-service:
+    build:
+      context: ..
+      dockerfile: services/booking-service/Dockerfile
+    container_name: booking-service
+    ports:
+      - "8083:8083"
+    environment:
+      EUREKA_URL: http://discovery-server:8761/eureka/
+      CONFIG_SERVER_URL: http://config-server:8888
+    depends_on:
+      discovery-server:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+
   api-gateway:
     build:
       context: ..
