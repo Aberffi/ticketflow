@@ -34,7 +34,7 @@ composants déjà présents des éléments planifiés et des choix restant à va
 | `discovery-server` | Service registry | Eureka | Done |
 | `event-service` | Events catalog (create, publish, close) | Spring Web, JPA | Done |
 | `config-server` | Centralized configuration | Spring Cloud Config | Done |
-| `booking-service` | Booking and seat locking | OpenFeign, Resilience4J | Planned |
+| `booking-service` | Booking and seat counting; calls `event-service` | Spring Web, JPA, OpenFeign | Done |
 | `payment-service` | Simulated payment provider (random failures) | Resilience4J | Planned |
 | `notification-service` | Confirmation emails/SMS | Kafka consumer | Planned |
 | `web-frontend` | Event catalog and customer booking journey | Angular | Planned |
@@ -52,12 +52,12 @@ Each step is developed on a `feature/step-XX-...` branch and frozen with a `step
 | `step-03-discovery` | Eureka + load-balanced routing |
 | `step-04-event-service` | Second business service |
 | `step-05-config` | Config Server |
-| `step-06-persistence` | PostgreSQL per service + Flyway migrations |
-| `step-07-api-contract` | `/api/v1`, OpenAPI, explicit gateway routes |
-| `step-08-security` | Keycloak, JWT, roles |
-| `step-09-catalog` | Catalog features (search, pagination) |
-| `step-10-customer-profile` | Customer profile bound to the identity |
-| `step-11-booking` | booking-service + OpenFeign |
+| `step-06-booking-feign` | booking-service + OpenFeign (synchronous call to event-service) |
+| `step-07-persistence` | PostgreSQL per service + Flyway migrations |
+| `step-08-api-contract` | `/api/v1`, OpenAPI, explicit gateway routes |
+| `step-09-security` | Keycloak, JWT, roles |
+| `step-10-catalog` | Catalog features (search, pagination) |
+| `step-11-customer-profile` | Customer profile bound to the identity |
 | `step-12-resilience` | Resilience4J |
 | `step-13-payment` | Simulated payment service |
 | `step-14-kafka` | Versioned events, outbox, DLT |
