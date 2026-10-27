@@ -1,9 +1,28 @@
-
+server:
+  port: 8080
 spring:
   application:
     name: api-gateway
-  config:
-    import: "configserver:http://localhost:8888"
   cloud:
-    config:
-      label: main
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: customer-service
+              uri: lb://customer-service
+              predicates:
+                - Path=/api/customers/**
+              filters:
+                - AddResponseHeader=X-Served-By, api-gateway
+management:
+  endpoint:
+    gateway:
+      access: read-only
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
